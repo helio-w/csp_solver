@@ -40,7 +40,26 @@ public class Solver {
 		this.constraints = constraints;
 	}
 
-    public void backtracking() {
-        Stack<ArrayList<Variable>> stack = new Stack<>();
+    //Attention pour l'instant c'est la même instance à chaque fois
+    public void solve() {
+        StackBackTrack stack = new StackBackTrack();
+        stack.push(variables);
+        Boolean isend = false;
+        int compteur = 0;
+
+        while(!isend)
+        {   
+            //forward checking
+            Variable v = variables.get(compteur);
+            //v.domain.setFirstValidValue();
+            /*
+             * Faut faire le parcours sur la liste des contraintes et vérifier chaque contraintes une par une
+             * Si ça marche on retourne à la contrainte précedentes en changeant la valeur de la variable
+             * Sinon on passe à la contrainte suivante
+             */
+            
+        }
+
+
     }
 }
