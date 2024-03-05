@@ -1,7 +1,7 @@
 package solver;
 
 import java.util.ArrayList;
-
+import java.util.Stack;
 
 import var.Variable;
 import constraints.*;
@@ -39,4 +39,8 @@ public class Solver {
 	public void setConstraints(ArrayList<Constraint> constraints) {
 		this.constraints = constraints;
 	}
+
+    public void backtracking() {
+        Stack<ArrayList<Variable>> stack = new Stack<>();
+    }
 }
