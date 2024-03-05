@@ -5,17 +5,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import var.CspInt;
+import var.IntCsp;
 import domains.IntDomain;
 
-class EqCstIntTest {
-	CspInt testVar;
-	EqCstInt ctrainteTest;
+class IntEqCstTest {
+	IntCsp testVar;
+	IntEqCst ctrainteTest;
 	
 	@BeforeEach
 	void setUp() throws Exception {
-		testVar = new CspInt("Test", new IntDomain(2, 5));
-		ctrainteTest = new EqCstInt(testVar, 5);
+		testVar = new IntCsp("Test", new IntDomain(2, 5));
+		ctrainteTest = new IntEqCst(testVar, 5);
 	}
 
 	@Test

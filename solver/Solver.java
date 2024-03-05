@@ -18,11 +18,6 @@ public class Solver {
 		this.setConstraints(new ArrayList<Constraint>());
 	}
 	
-	public Solver(ArrayList<Variable> variables, ArrayList<Constraint> constraints) {
-		this.setVariables(variables);
-		this.setConstraints(constraints);
-	}
-	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		

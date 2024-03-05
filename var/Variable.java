@@ -10,6 +10,4 @@ public abstract class Variable {
 		this.name = name;
 		this.domain = domain;
 	}
-	
-	
 }
