@@ -75,4 +75,14 @@ class IntDomainTest {
 		this.testDomain = new IntDomain(2, 2);
 		assertEquals(2, testDomain.getFirstValidValue());
 	}
+	
+	@Test
+	final void testGetRangeSize() {
+		assertEquals(1, IntDomain.getRangeSize(2, 2));
+		assertEquals(2, IntDomain.getRangeSize(2, 3));
+		assertEquals(2, IntDomain.getRangeSize(-3, -2));
+		assertEquals(5, IntDomain.getRangeSize(0, 4));
+		assertEquals(5, IntDomain.getRangeSize(2, 6));
+		assertEquals(8, IntDomain.getRangeSize(-2, 5));
+	}
 }

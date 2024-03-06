@@ -1,12 +1,9 @@
 package domains;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.BitSet;
 
 public class IntDomain extends Domain{
-	private HashMap<Integer, Boolean> boolTab;
+	private BitSet domain;
 	private int borneSup;
 	private int borneInf;
 	
@@ -21,15 +18,10 @@ public class IntDomain extends Domain{
 			throw new IllegalArgumentException("Erreur IntDomain : borne inférieur > borne supérieure");
 		}
 		
-		this.boolTab = new HashMap<Integer, Boolean>();
 		this.borneInf = min;
 		this.borneSup = max;
-		
-		// Remplissage du tableau de booléens
-		for(int i = this.borneInf; i <= this.borneSup; i++) {
-			this.boolTab.put(i, true);	
-		}
-		
+		this.domain = new BitSet(IntDomain.getRangeSize(min, max));
+		this.domain.set(0, IntDomain.getRangeSize(min, max));
 	}
 	
 	/**
@@ -42,7 +34,7 @@ public class IntDomain extends Domain{
 		if(val < this.borneInf || val > this.borneSup) {
 			return false;
 		}else {
-			return this.boolTab.get(val);
+			return this.domain.get(val-this.borneInf);
 		}
 	}
 	
@@ -52,7 +44,7 @@ public class IntDomain extends Domain{
 	 * @param bl nouvel état
 	 */
 	public void setValueState(int val, boolean bl) {
-		this.boolTab.put(val, bl);
+		this.domain.set(val-this.borneInf, bl);
 	}
 	
 	/**
@@ -60,7 +52,7 @@ public class IntDomain extends Domain{
 	 * @return l'entier correspondant à la taille du domaine
 	 */
 	public int getSize() {
-		return (int) this.boolTab.values().stream().filter(Boolean::valueOf).count();
+		return this.domain.cardinality();
 	}
 	
 	public int getBorneSup() {
@@ -72,7 +64,7 @@ public class IntDomain extends Domain{
 	}
 	
 	public boolean isEmpty() {
-		return this.getSize() == 0;
+		return this.domain.isEmpty();
 	}
 	
 	public boolean hasOnlyOneValue() {
@@ -80,15 +72,10 @@ public class IntDomain extends Domain{
 	}
 	
 	public Integer getFirstValidValue() {
-		Optional<Integer> key = this.boolTab.entrySet()
-				.stream()
-				.filter(entry -> entry.getValue())
-				.map(Map.Entry::getKey)
-				.findFirst();
-		return key.orElseThrow(() -> new NoSuchElementException("Aucune clé associée à la valeur true n'a été trouvée"));
+		return this.domain.nextSetBit(0)+this.borneInf;
 	}
 	
-	public HashMap<Integer, Boolean> getValues(){
-		return this.boolTab;
+	public static int getRangeSize(int inf, int sup) {
+		return (sup-inf)+1;
 	}
 }
