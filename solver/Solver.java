@@ -3,18 +3,19 @@ package solver;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import var.IntCsp;
 import var.Variable;
 import constraints.*;
 
 public class Solver {
-	private ArrayList<Variable> variables;
+	private ArrayList<IntCsp> variables;
 	private ArrayList<Constraint> constraints;
 	
 	/**
 	 * Initialise un solveur vide de variable et de contraintes
 	 */
 	public Solver() {
-		this.setVariables(new ArrayList<Variable>());
+		this.setVariables(new ArrayList<IntCsp>());
 		this.setConstraints(new ArrayList<Constraint>());
 	}
 	
@@ -24,11 +25,11 @@ public class Solver {
 	}
 	
 	// Méthodes get/set temporaires
-	public ArrayList<Variable> getVariables() {
+	public ArrayList<IntCsp> getVariables() {
 		return variables;
 	}
 
-	public void setVariables(ArrayList<Variable> variables) {
+	public void setVariables(ArrayList<IntCsp> variables) {
 		this.variables = variables;
 	}
 
@@ -40,26 +41,70 @@ public class Solver {
 		this.constraints = constraints;
 	}
 
-    //Attention pour l'instant c'est la même instance à chaque fois
+	private IntCsp getFirstNotFixed(){
+		for(IntCsp v : variables){
+			if(v.isFixed == false){
+				return v;
+			}
+		}
+		return null;
+	}
+
+	private boolean checkAllFixed(){
+		for(IntCsp v : variables){
+			if(v.isFixed == false){
+				return false;
+			}
+		}
+		return true;
+	}
+
     public void solve() {
         StackBackTrack stack = new StackBackTrack();
         stack.push(variables);
-        Boolean isend = false;
-        int compteur = 0;
+		boolean isEnd = false;
+		IntCsp firstVar;
 
-        while(!isend)
+        while(!isEnd)
         {   
-            //forward checking
-            Variable v = variables.get(compteur);
-            //v.domain.setFirstValidValue();
-            /*
-             * Faut faire le parcours sur la liste des contraintes et vérifier chaque contraintes une par une
-             * Si ça marche on retourne à la contrainte précedentes en changeant la valeur de la variable
-             * Sinon on passe à la contrainte suivante
-             */
-            
+			firstVar = this.getFirstNotFixed();
+			firstVar.fixWithFirstDomVal();
+
+			for(IntCsp var : variables)
+			{
+				var.pushDomain();
+			}
+
+            for(Constraint c : constraints)
+			{
+				try
+				{
+					c.filter();
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+
+			for(IntCsp v2 : variables)
+			{
+				if(v2.isDomainEmpty())
+				{
+					firstVar.setDomainVal(firstVar.value, false);
+					firstVar.isFixed = false;
+					for(IntCsp v1 : variables)
+					{
+						v1.undoDomain();
+					}
+					break;
+				}
+			}
+
+			if(checkAllFixed())
+			{
+				isEnd = true;
+			}
         }
-
-
     }
 }
