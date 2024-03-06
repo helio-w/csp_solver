@@ -1,7 +1,6 @@
 package solver;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 import var.IntCsp;
 import var.Variable;
@@ -60,8 +59,6 @@ public class Solver {
 	}
 
     public void solve() {
-        StackBackTrack stack = new StackBackTrack();
-        stack.push(variables);
 		boolean isEnd = false;
 		IntCsp firstVar;
 
