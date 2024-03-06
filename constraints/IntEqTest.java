@@ -31,8 +31,8 @@ class IntEqTest {
 		
 		var2.fixWithFirstDomVal();
 		
-		assertEquals(true, var2.isInDomain(var1.value));
-		assertEquals(0, var2.value);
+		assertEquals(true, var2.isInDomain(var1.getValue()));
+		assertEquals(0, var2.getValue());
 		assertEquals(1, var2.getDomainSize());
 	}
 	
@@ -50,8 +50,16 @@ class IntEqTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+	}
+	
+	final void testFilter3() throws Exception {
+		IntCsp a = new IntCsp("A", -2, 3);
+		a.fixWithFirstDomVal();
+		IntCsp b = new IntCsp("B", -4, 5);
+		IntEq cte = new IntEq(a, b);
+		cte.filter();
+		b.fixWithFirstDomVal();
+		assertEquals(-2, b.getValue());
 	}
 
 }

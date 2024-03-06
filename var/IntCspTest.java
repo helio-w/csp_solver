@@ -34,7 +34,7 @@ class IntCspTest {
 	@Test
 	final void testSetUniqueVal() {
 		varTest.setUniqueVal(0);
-		assertEquals(0, varTest.value);
+		assertEquals(0, varTest.getValue());
 	}
 
 	@Test
@@ -68,7 +68,7 @@ class IntCspTest {
 		varTest.fixWithFirstDomVal();
 		assertEquals(1, varTest.getDomainSize());
 		assertEquals(true, varTest.isFixed());
-		assertEquals(borneInf+1, varTest.value);
+		assertEquals(borneInf+1, varTest.getValue());
 	}
 	
 	final void testBlacklistCurrentValue() {

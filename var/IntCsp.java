@@ -7,7 +7,6 @@ import domains.IntDomain;
 
 public class IntCsp extends Variable {
 	public IntDomain domain; // Public for debug
-	public int value;					
 	
 	// La mécanique de backtracking des domaines est intégrée aux variables
 	
@@ -25,13 +24,11 @@ public class IntCsp extends Variable {
 	public IntCsp(String name, IntDomain domain) throws Exception {
 		super(name);
 		this.domain = domain;
-		this.value = this.domain.getBorneInf(); 	// On initialise la valeur par défaut de la variable à la borne inférieure de son domaine de définition
 	}	
 	
 	public IntCsp(String name, int borneMin, int borneMax) throws Exception {
 		super(name);
 		this.domain = new IntDomain(borneMin, borneMax);
-		this.value = this.domain.getBorneInf(); 	// On initialise la valeur par défaut de la variable à la borne inférieure de son domaine de définition
 	}	
 	
 	// Méthodes de gestion du domaine
@@ -59,7 +56,6 @@ public class IntCsp extends Variable {
 	 */
 	public void setUniqueVal(int val) {
 		this.domain.setUniqueVal(val);
-		this.value = val;
 	}
 	
 	/**
@@ -110,8 +106,20 @@ public class IntCsp extends Variable {
 		}
 	}
 	
+	/**
+	 * Verifie si la variable possède une seule valeur possible dans son domaine de définition
+	 * @return vrai si la variable ne possède qu'une possibilité. Faux sinon
+	 */
 	public boolean isFixed() {
 		return this.domain.hasOnlyOneValue();
+	}
+	
+	/**
+	 * Retourne la première valeur valide du domaine de définition. Exemple : [-2, 5] retourne -2
+	 * @return Entier correspondant à la première valeur valide du domaine de définition.
+	 */
+	public int getValue() {
+		return this.domain.getFirstValidValue();
 	}
 	
 	// Gestion de la pile
@@ -139,15 +147,15 @@ public class IntCsp extends Variable {
 	}
 	
 	public void blacklistCurrentVal() {
-		this.setDomainVal(value, false);
+		this.setDomainVal(this.getValue(), false);
 	}
 	
 	@Override
 	public String toString() {
 		if(this.isFixed()) {
-			return String.format("%s = %d", this.name, this.value);
+			return String.format("%s = %d", this.name, this.getValue());
 		}else {
-			return String.format("%s pas fixée (valeur temporaire %d)", this.name, this.value);
+			return String.format("%s pas fixée (valeur temporaire %d)", this.name, this.getValue());
 		}
 	}
 	

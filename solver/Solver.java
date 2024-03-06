@@ -52,15 +52,6 @@ public class Solver {
 		return null;
 	}
 	
-	private boolean checkAllEmpty() {
-		for(IntCsp v : variables) {
-			if(!v.isDomainEmpty()) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
 	private boolean checkAllFixed(){
 		for(IntCsp v : variables){
 			if(v.isFixed() == false){
@@ -70,34 +61,31 @@ public class Solver {
 		return true;
 	}
 	
-    public void solve() {
+    public boolean solve() throws Exception {
 		boolean backtrack = false;
 		IntCsp currentVar;
 		Stack<IntCsp> varStack = new Stack<IntCsp>();
 		varStack.push(this.getFirstNotFixed());
 		
-        while(!checkAllFixed() && !this.checkAllEmpty())
+        while(!checkAllFixed())
         {   
+        	// "Sauvegarde" des domaines des variables dans la pile de chaque variable
     		for(IntCsp var : variables)
 			{
 				var.pushDomain();
 			}
-
+    		
+    		// Forward Checking
         	currentVar = varStack.firstElement();
 			currentVar.fixWithFirstDomVal();
 			
+			// Filtrage
             for(Constraint c : constraints)
 			{
-				try
-				{
-					c.filter();
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
+				c.filter();
 			}
-
+            
+            // Vérification des domaines des variables et backtracking si un domaine devient vide
 			for(IntCsp v2 : variables)
 			{
 				if(v2.isDomainEmpty())
@@ -112,20 +100,31 @@ public class Solver {
 				}
 			}
 			
-			if(currentVar.isDomainEmpty()) {
-				varStack.pop();
-			}
-			
 			if (!backtrack) {
 				varStack.add(this.getFirstNotFixed());	
+			}else {
+				// Si on a épuisé le domaine de la currentVar, on dépile et on revient en arrère
+				if(currentVar.isDomainEmpty()) {
+					varStack.pop();
+				}
 			}
 			
+			if(varStack.empty()) {
+				return false;
+			}
+        }
+        // Retour
+        if(this.checkAllFixed()) {
+        	return true;
+        }else {
+        	return false;
         }
     }
     
+    // Affichage de l'état du système
     @Override
     public String toString() {
-    	String res = "";
+    	String res = "Etat du solveur : \n";
     	for(IntCsp v : variables) {
     		res += v.toString() + "\n";
     	}
@@ -139,20 +138,24 @@ public class Solver {
 		// On initialise un solveur vide
 		Solver solver = new Solver();
 		
-		IntCsp a = new IntCsp("A", -2, 5);
-		IntCsp b = new IntCsp("B", 3, 5);
-		// IntCsp c = new IntCsp("C", -5, 3);
+		IntCsp a = new IntCsp("A", -2, 3);
+		IntCsp b = new IntCsp("B", -2, 1);
+		IntCsp c = new IntCsp("C", 0, 3);
 		
 		solver.addVariable(a);
 		solver.addVariable(b);
-		// solver.addVariable(c);
+		solver.addVariable(c);
 		
 		solver.addConstraint(new IntEq(a, b));
-		// solver.addConstraint(new IntEq(b, c));
+		solver.addConstraint(new IntEq(b, c));
 		
 		System.out.println(solver);
 		
-		solver.solve();
+		if(solver.solve()) {
+			System.out.println("Le solveur a trouvé une solution !");
+		}else {
+			System.out.println("Pas de solution ...");
+		}
 		
 		System.out.println(solver);
 		

@@ -21,7 +21,7 @@ class IntEqCstTest {
 	@Test
 	final void testFilter1() throws Exception {
 		ctrainteTest.filter();
-		assertEquals(5, testVar.value);
+		assertEquals(5, testVar.getValue());
 	}
 
 }
