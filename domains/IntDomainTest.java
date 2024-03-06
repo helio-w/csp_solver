@@ -1,7 +1,7 @@
 package domains;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,8 +32,9 @@ class IntDomainTest {
 	@Test
 	final void testSetVal() {
 		testDomain.setValueState(this.testDomain.getBorneInf(), false);
+		testDomain.setValueState(this.testDomain.getBorneSup(), false);
 		assertEquals(false, testDomain.isIn(this.testDomain.getBorneInf()));
-		assertEquals(true, testDomain.isIn(this.testDomain.getBorneSup()));
+		assertEquals(false, testDomain.isIn(this.testDomain.getBorneSup()));
 	}
 	
 	@Test
@@ -72,7 +73,9 @@ class IntDomainTest {
 	
 	@Test
 	final void testGetOnlyOneVal() throws Exception{
-		this.testDomain = new IntDomain(2, 2);
+		this.testDomain = new IntDomain(0, 2);
+		this.testDomain.setValueState(0, false);
+		this.testDomain.setValueState(1, false);
 		assertEquals(2, testDomain.getFirstValidValue());
 	}
 	
@@ -84,5 +87,19 @@ class IntDomainTest {
 		assertEquals(5, IntDomain.getRangeSize(0, 4));
 		assertEquals(5, IntDomain.getRangeSize(2, 6));
 		assertEquals(8, IntDomain.getRangeSize(-2, 5));
+	}
+	
+	@Test
+	final void testGetFirstValidValue() {
+		assertEquals(-2, this.testDomain.getFirstValidValue());
+		this.testDomain.setValueState(-2, false);
+		assertEquals(-1, this.testDomain.getFirstValidValue());
+	}
+	
+	@Test
+	final void testSetUniqueVal() {
+		this.testDomain.setUniqueVal(0);
+		assertEquals(0, this.testDomain.getFirstValidValue());
+		assertEquals(1, this.testDomain.getSize());
 	}
 }

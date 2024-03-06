@@ -6,7 +6,7 @@ import domains.IntDomain;
 
 
 public class IntCsp extends Variable {
-	private IntDomain domain;
+	public IntDomain domain; // Public for debug
 	public int value;					
 	public boolean isFixed = false;		// True si la valeur est fixée, faux sinon
 	
@@ -26,6 +26,12 @@ public class IntCsp extends Variable {
 	public IntCsp(String name, IntDomain domain) throws Exception {
 		super(name);
 		this.domain = domain;
+		this.value = this.domain.getBorneInf(); 	// On initialise la valeur par défaut de la variable à la borne inférieure de son domaine de définition
+	}	
+	
+	public IntCsp(String name, int borneMin, int borneMax) throws Exception {
+		super(name);
+		this.domain = new IntDomain(borneMin, borneMax);
 		this.value = this.domain.getBorneInf(); 	// On initialise la valeur par défaut de la variable à la borne inférieure de son domaine de définition
 	}	
 	
@@ -99,7 +105,8 @@ public class IntCsp extends Variable {
 		if (this.domain.isEmpty()) {
 			return false;
 		}else {
-			this.domain.setUniqueVal(this.domain.getFirstValidValue());
+			int newVal = this.domain.getFirstValidValue();
+			this.setUniqueVal(newVal);
 			this.isFixed = true;
 			return true;
 		}
@@ -127,6 +134,15 @@ public class IntCsp extends Variable {
 	 */
 	public boolean isStackEmpty() {
 		return this.domainStack.empty();
+	}
+	
+	@Override
+	public String toString() {
+		if(this.isFixed) {
+			return String.format("%s = %d", this.name, this.value);
+		}else {
+			return String.format("%s pas fixée (valeur temporaire %d)", this.name, this.value);
+		}
 	}
 	
 }
