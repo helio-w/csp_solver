@@ -1,12 +1,18 @@
 package var;
 
+import java.util.Stack;
+
 import domains.IntDomain;
 
 
 public class IntCsp extends Variable {
-	private final IntDomain domain;
+	private IntDomain domain;
 	public int value;					
 	public boolean isFixed = false;		// True si la valeur est fixée, faux sinon
+	
+	// La mécanique de backtracking des domaines est intégrée aux variables
+	
+	Stack<IntDomain> domainStack = new Stack<IntDomain>();
 	
 	// Constructeurs
 	
@@ -15,13 +21,6 @@ public class IntCsp extends Variable {
 		this.domain = domain;
 		this.value = this.domain.getBorneInf(); 	// On initialise la valeur par défaut de la variable à la borne inférieure de son domaine de définition
 	}	
-	
-	
-	public IntCsp(IntCsp oldVar) {
-		super(oldVar.name);
-		this.domain = oldVar.domain;
-		this.isFixed = oldVar.isFixed;
-	}
 	
 	// Méthodes de gestion du domaine
 	
@@ -63,4 +62,15 @@ public class IntCsp extends Variable {
 			return true;
 		}
 	}
+	
+	// Gestion de la pile
+	
+	public void pushDomain() {
+		this.domainStack.push(new IntDomain(domain));
+	}
+	
+	public void undoDomain() {
+		this.domain = this.domainStack.pop();
+	}
+	
 }
