@@ -3,7 +3,7 @@ package constraints;
 import var.IntCsp;
 
 
-public class IntEq extends Constraint{
+public class IntEq extends IntConstraint{
 	private IntCsp v1;
 	private IntCsp v2;
 	
