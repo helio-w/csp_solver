@@ -4,28 +4,63 @@ import domains.IntDomain;
 
 
 public class IntCsp extends Variable {
-	private int value;
+	private final IntDomain domain;
+	public int value;					
+	public boolean isFixed = false;		// True si la valeur est fixée, faux sinon
+	
+	// Constructeurs
 	
 	public IntCsp(String name, IntDomain domain) throws Exception {
-		super(name, domain);
-		this.value = this.getDomain().getBorneInf();
-		this.setVal();
+		super(name);
+		this.domain = domain;
+		this.value = this.domain.getBorneInf(); 	// On initialise la valeur par défaut de la variable à la borne inférieure de son domaine de définition
+	}	
+	
+	
+	public IntCsp(IntCsp oldVar) {
+		super(oldVar.name);
+		this.domain = oldVar.domain;
+		this.isFixed = oldVar.isFixed;
 	}
 	
-	public IntCsp(String name, int borneMin, int borneMax) throws Exception {
-		this(name, new IntDomain(borneMin, borneMax));
+	// Méthodes de gestion du domaine
+	
+	public int getDomainBorneSup() {
+		return this.domain.getBorneSup();
 	}
 	
-	private IntDomain getDomain() {
-		return (IntDomain) super.domain;
+	public int getDomainBorneInf() {
+		return this.domain.getBorneInf();
 	}
 	
-	public void setVal() throws Exception {
-		if(this.getDomain().hasOnlyOneValue())
-			this.value = this.getDomain().getFirstValidValue();
+	public void setUniqueVal(int val) {
+		this.domain.setUniqueVal(val);
 	}
 	
-	public int getCurrentValue() {
-		return this.value;
-	}		
+	public boolean isInDomain(int val) {
+		return this.domain.isIn(val);
+	}
+	
+	public int getDomainSize() {
+		return this.domain.getSize();
+	}
+	
+	public void setDomainVal(int val, boolean bl) {
+		this.domain.setValueState(val, bl);
+	}
+	
+	public boolean isDomainEmpty() {
+		return this.domain.isEmpty();
+	}
+	
+	public boolean fixWithFirstDomVal() {
+		if (this.domain.isEmpty()) {
+			return false;
+		}else {
+			this.value = this.domain.getFirstValidValue();
+			this.domain.setUniqueVal(this.value);
+			this.isFixed = true;
+			return true;
+		}
+	}
 }

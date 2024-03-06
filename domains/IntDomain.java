@@ -25,6 +25,16 @@ public class IntDomain extends Domain{
 	}
 	
 	/**
+	 * Créer un domaine à partir d'un autre domaine
+	 * @param oldDomain domaine a copier
+	 */
+    public IntDomain(IntDomain oldDomain) {
+        this.borneInf = oldDomain.borneInf;
+        this.borneSup = oldDomain.borneSup;
+        this.domain = (BitSet) oldDomain.domain.clone();
+    }
+	
+	/**
 	 * Vérifie si la valeur est dans le domaine
 	 * @param val
 	 * @return false si la valeur n'est pas dans la domaine, vraie si elle est dans le domaine
@@ -34,7 +44,7 @@ public class IntDomain extends Domain{
 		if(val < this.borneInf || val > this.borneSup) {
 			return false;
 		}else {
-			return this.domain.get(val-this.borneInf);
+			return this.domain.get(this.getValIndex(val)); // Translation
 		}
 	}
 	
@@ -44,17 +54,21 @@ public class IntDomain extends Domain{
 	 * @param bl nouvel état
 	 */
 	public void setValueState(int val, boolean bl) {
-		this.domain.set(val-this.borneInf, bl);
+		this.domain.set(this.getValIndex(val), bl);
 	}
 	
 	/**
-	 * Renvoi la taille du domaine 
+	 * Renvoi le nombre de valeur dans le domaine 
 	 * @return l'entier correspondant à la taille du domaine
 	 */
 	public int getSize() {
 		return this.domain.cardinality();
 	}
 	
+	/**
+	 * Renvoi 
+	 * @return entier correspondant à la borne supérieure de l'intervalle
+	 */
 	public int getBorneSup() {
 		return this.borneSup;
 	}
@@ -63,10 +77,12 @@ public class IntDomain extends Domain{
 		return this.borneInf;
 	}
 	
+	@Override
 	public boolean isEmpty() {
 		return this.domain.isEmpty();
 	}
 	
+	@Override
 	public boolean hasOnlyOneValue() {
 		return this.getSize() == 1;
 	}
@@ -75,7 +91,23 @@ public class IntDomain extends Domain{
 		return this.domain.nextSetBit(0)+this.borneInf;
 	}
 	
+	public void setUniqueVal(int val) {
+		this.domain.clear();
+		this.domain.set(this.getValIndex(val));
+	}
+	
+	/**
+	 * Détermine le nombre de valeurs dans l'intervalle d'entiers [inf, sup]
+	 * @param inf borne inférieure de l'intervalle
+	 * @param sup borne supérieure de l'intervalle
+	 * @return nombre de valeurs dans l'intervalle
+	 */
 	public static int getRangeSize(int inf, int sup) {
 		return (sup-inf)+1;
+	}
+	
+	// Méthode de translation
+	private int getValIndex(int val) {
+		return val-this.borneInf;
 	}
 }

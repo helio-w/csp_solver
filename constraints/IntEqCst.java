@@ -1,7 +1,6 @@
 package constraints;
 
 import var.IntCsp;
-import domains.IntDomain;
 
 public class IntEqCst extends IntConstraint{
 	private int cst;
@@ -14,10 +13,6 @@ public class IntEqCst extends IntConstraint{
 	
 	@Override
 	public void filter() {
-		IntDomain vDomain = (IntDomain)v.domain;
-		
-		vDomain.getValues().entrySet().stream()
-		.filter(entry -> entry.getKey() != this.cst)
-		.forEach(entry -> ((IntDomain)v.domain).setValueState(entry.getKey(), false));
+		this.v.setUniqueVal(cst);
 	}
 }

@@ -1,10 +1,6 @@
 package constraints;
 
 import var.IntCsp;
-import domains.IntDomain;
-
-import java.util.HashMap;
-
 
 
 public class IntEq extends Constraint{
@@ -13,14 +9,24 @@ public class IntEq extends Constraint{
 	
 	public IntEq(IntCsp v1, IntCsp v2) {
 		this.v1 = v1;
-		this.v2 = v1;
+		this.v2 = v2;
 	}
 	
 	@Override
 	public void filter() {
-		// Le filtrage est bidirectionnel ici : le domaine de v1 doit être égal au domaine de v2 et inversement
-		// Si la clé est dans v1 et dans v2, alors on regarde si v1 et v2 sont a true dans la même clé -> Si ce n'est pas le cas, on passe les 2 à false.
-		// Si la clé est dans v1 mais pas dans v2, alors on passe la valeur correspondante dans v1 à false. Cette valeur n'est pas dans l'intervalle de v2.
-			
+		// Le filtrage est bidirectionnel ici : l'intersection du domaine de v1 et v2 doit être la même. Tout le reste doit être nul
+		
+		for(int i = v1.getDomainBorneInf(); i <  v1.getDomainSize(); i++) {
+			if(!v2.isInDomain(i) ) {
+				v1.setDomainVal(i, false);
+			}
+		}
+		
+		for(int i = v2.getDomainBorneInf(); i <  v2.getDomainSize(); i++) {
+			if(!v1.isInDomain(i)) {
+				v2.setDomainVal(i, false);
+			}
+		}
+		
 	}
 }
