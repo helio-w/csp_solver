@@ -69,6 +69,7 @@ public class Solver {
 		
         while(!checkAllFixed())
         {   
+        	System.out.println(this);
         	// "Sauvegarde" des domaines des variables dans la pile de chaque variable
     		for(IntCsp var : variables)
 			{
@@ -106,11 +107,11 @@ public class Solver {
 				// Si on a épuisé le domaine de la currentVar, on dépile et on revient en arrère
 				if(currentVar.isDomainEmpty()) {
 					varStack.pop();
+					if(varStack.empty()) {
+						return false;
+					}
+					varStack.firstElement().blacklistCurrentVal();
 				}
-			}
-			
-			if(varStack.empty()) {
-				return false;
 			}
         }
         // Retour
@@ -139,13 +140,14 @@ public class Solver {
 		Solver solver = new Solver();
 		
 		IntCsp a = new IntCsp("A", -2, 3);
-		IntCsp b = new IntCsp("B", -2, 1);
+		IntCsp b = new IntCsp("B", -2, 90);
 		IntCsp c = new IntCsp("C", 0, 3);
 		
 		solver.addVariable(a);
 		solver.addVariable(b);
 		solver.addVariable(c);
 		
+		solver.addConstraint(new IntEqCst(c, 3)); // A corriger dans l'ordre d'application des filtres
 		solver.addConstraint(new IntEq(a, b));
 		solver.addConstraint(new IntEq(b, c));
 		
