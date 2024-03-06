@@ -1,6 +1,7 @@
 package solver;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import var.IntCsp;
 import constraints.*;
@@ -44,16 +45,25 @@ public class Solver {
 	
 	private IntCsp getFirstNotFixed(){
 		for(IntCsp v : variables){
-			if(v.isFixed == false){
+			if(v.isFixed() == false){
 				return v;
 			}
 		}
 		return null;
 	}
-
+	
+	private boolean checkAllEmpty() {
+		for(IntCsp v : variables) {
+			if(!v.isDomainEmpty()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	private boolean checkAllFixed(){
 		for(IntCsp v : variables){
-			if(v.isFixed == false){
+			if(v.isFixed() == false){
 				return false;
 			}
 		}
@@ -61,21 +71,21 @@ public class Solver {
 	}
 	
     public void solve() {
-		boolean isEnd = false;
+		boolean backtrack = false;
 		IntCsp currentVar;
-
-        while(!isEnd)
+		Stack<IntCsp> varStack = new Stack<IntCsp>();
+		varStack.push(this.getFirstNotFixed());
+		
+        while(!checkAllFixed() && !this.checkAllEmpty())
         {   
-			currentVar = this.getFirstNotFixed();
-			currentVar.fixWithFirstDomVal();
-			System.out.println("La variable séléctionnée est : "+currentVar);
-			System.out.println(this);
-
-			for(IntCsp var : variables)
+    		for(IntCsp var : variables)
 			{
 				var.pushDomain();
 			}
 
+        	currentVar = varStack.firstElement();
+			currentVar.fixWithFirstDomVal();
+			
             for(Constraint c : constraints)
 			{
 				try
@@ -92,21 +102,24 @@ public class Solver {
 			{
 				if(v2.isDomainEmpty())
 				{
-					System.out.println("Le domaine de v2 est vide");
-					currentVar.setDomainVal(currentVar.value, false);
-					currentVar.isFixed = false;
+					backtrack = true;
 					for(IntCsp v1 : variables)
 					{
 						v1.undoDomain();
 					}
+					currentVar.blacklistCurrentVal();
 					break;
 				}
 			}
-
-			if(checkAllFixed())
-			{
-				isEnd = true;
+			
+			if(currentVar.isDomainEmpty()) {
+				varStack.pop();
 			}
+			
+			if (!backtrack) {
+				varStack.add(this.getFirstNotFixed());	
+			}
+			
         }
     }
     
@@ -123,7 +136,7 @@ public class Solver {
 		// Une démonstration très simple
 		// On cherche à produire A=B=C avec C=2
 		
-		// On initialise in solveur vide
+		// On initialise un solveur vide
 		Solver solver = new Solver();
 		
 		IntCsp a = new IntCsp("A", -2, 5);
@@ -140,6 +153,8 @@ public class Solver {
 		System.out.println(solver);
 		
 		solver.solve();
+		
+		System.out.println(solver);
 		
 	}
 }

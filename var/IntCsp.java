@@ -8,7 +8,6 @@ import domains.IntDomain;
 public class IntCsp extends Variable {
 	public IntDomain domain; // Public for debug
 	public int value;					
-	public boolean isFixed = false;		// True si la valeur est fixée, faux sinon
 	
 	// La mécanique de backtracking des domaines est intégrée aux variables
 	
@@ -107,9 +106,12 @@ public class IntCsp extends Variable {
 		}else {
 			int newVal = this.domain.getFirstValidValue();
 			this.setUniqueVal(newVal);
-			this.isFixed = true;
 			return true;
 		}
+	}
+	
+	public boolean isFixed() {
+		return this.domain.hasOnlyOneValue();
 	}
 	
 	// Gestion de la pile
@@ -136,9 +138,13 @@ public class IntCsp extends Variable {
 		return this.domainStack.empty();
 	}
 	
+	public void blacklistCurrentVal() {
+		this.setDomainVal(value, false);
+	}
+	
 	@Override
 	public String toString() {
-		if(this.isFixed) {
+		if(this.isFixed()) {
 			return String.format("%s = %d", this.name, this.value);
 		}else {
 			return String.format("%s pas fixée (valeur temporaire %d)", this.name, this.value);

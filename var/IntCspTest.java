@@ -67,8 +67,13 @@ class IntCspTest {
 		varTest.setDomainVal(borneInf, false);
 		varTest.fixWithFirstDomVal();
 		assertEquals(1, varTest.getDomainSize());
-		assertEquals(true, varTest.isFixed);
+		assertEquals(true, varTest.isFixed());
 		assertEquals(borneInf+1, varTest.value);
 	}
 	
+	final void testBlacklistCurrentValue() {
+		assertEquals(true, varTest.isInDomain(borneInf));
+		varTest.blacklistCurrentVal();
+		assertEquals(false, varTest.isInDomain(borneInf));
+	}
 }

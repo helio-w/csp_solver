@@ -35,5 +35,23 @@ class IntEqTest {
 		assertEquals(0, var2.value);
 		assertEquals(1, var2.getDomainSize());
 	}
+	
+	@Test
+	final void testFilter2() {
+		try {
+			IntCsp a = new IntCsp("A", -2, 5);
+			a.fixWithFirstDomVal();
+			IntCsp b = new IntCsp("B", 3, 5);
+			IntEq cte = new IntEq(a, b);
+			cte.filter();
+			assertEquals(true, b.isDomainEmpty());
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
 
 }
