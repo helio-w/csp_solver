@@ -9,6 +9,12 @@ public class Sudoku{
 
     public Sudoku() {
         this.sudokuGrid = new ArrayList<ArrayList<IntCsp>>();
+        for(int i = 0; i < 9; i++) {
+            this.sudokuGrid.add(new ArrayList<IntCsp>());
+            for(int j = 0; j < 9; j++) {
+                this.sudokuGrid.get(i).add(null);
+            }
+        }
     }
 
     /**
@@ -51,7 +57,34 @@ public class Sudoku{
         this.sudokuGrid.get(x).set(y, v);
     }
 
+    public void displayGrid() {
+        for (int i = 0; i < 9; i++) {
+            if (i % 3 == 0 && i != 0) {
+                System.out.println("------+-------+-------");
+            }
+            for (int j = 0; j < 9; j++) {
+                IntCsp var = this.getCell(i, j);
+                if (var != null) {
+                    int val = var.getValue();
+                    System.out.print(val + " ");
+                } else {
+                    System.out.print("  ");
+                }
+                if ((j + 1) % 3 == 0 && j != 8) {
+                    System.out.print("| "); 
+                }
+            }
+            System.out.println();
+        }
+    }
+
     public static void main(String[] args) {
-        
+        Sudoku sudoku = new Sudoku();
+        sudoku.setCell(0, 0, 1, "a");
+        sudoku.setCell(1, 1, 2, "b");
+        sudoku.setCell(2, 2, 3, "c");
+        sudoku.setCell(0, 2, 4, "d");
+        sudoku.setCell(0, 4, 5, "e");
+        sudoku.displayGrid();
     }
 }
