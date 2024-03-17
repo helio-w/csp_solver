@@ -1,6 +1,7 @@
 package solver;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Stack;
 
 import var.IntCsp;
@@ -69,6 +70,8 @@ public class Solver {
 		
         while(!checkAllFixed())
         {   
+        	backtrack = false;
+        	
         	System.out.println(this);
         	// "Sauvegarde" des domaines des variables dans la pile de chaque variable
     		for(IntCsp var : variables)
@@ -77,8 +80,10 @@ public class Solver {
 			}
     		
     		// Forward Checking
-        	currentVar = varStack.firstElement();
+        	currentVar = varStack.peek();
 			currentVar.fixWithFirstDomVal();
+			
+			System.out.println("Selection de la variable : "+currentVar);
 			
 			// Filtrage
             for(Constraint c : constraints)
@@ -91,6 +96,7 @@ public class Solver {
 			{
 				if(v2.isDomainEmpty())
 				{
+					System.out.println("Backtracking !");
 					backtrack = true;
 					for(IntCsp v1 : variables)
 					{
@@ -102,22 +108,36 @@ public class Solver {
 			}
 			
 			if (!backtrack) {
-				varStack.add(this.getFirstNotFixed());	
+				System.out.println("On ajoute "+this.getFirstNotFixed()+" à la liste");
+				varStack.push(this.getFirstNotFixed());
+				System.out.println("La tête de liste est maintenant : "+varStack.peek());
 			}else {
 				// Si on a épuisé le domaine de la currentVar, on dépile et on revient en arrère
 				if(currentVar.isDomainEmpty()) {
 					varStack.pop();
+					// Si la varstack est vide, aucun domaine n'est possible et on a pas de solution
 					if(varStack.empty()) {
 						return false;
 					}
 					varStack.firstElement().blacklistCurrentVal();
+				}else {
+					
 				}
 			}
+			
+	        try {
+	            Thread.sleep(1000);
+	        } catch (InterruptedException e) {
+	            // Gérer l'interruption si nécessaire
+	        }
         }
+        /* ----- Fin de la boucle ---- */
+        
+        
         // Retour
         if(this.checkAllFixed()) {
         	return true;
-        }else {
+        } else {
         	return false;
         }
     }
@@ -139,17 +159,15 @@ public class Solver {
 		// On initialise un solveur vide
 		Solver solver = new Solver();
 		
-		IntCsp a = new IntCsp("A", -2, 3);
-		IntCsp b = new IntCsp("B", -2, 90);
-		IntCsp c = new IntCsp("C", 0, 3);
+		IntCsp a = new IntCsp("A", 1, 3);
+		IntCsp b = new IntCsp("B", 1, 3);
+		IntCsp c = new IntCsp("C", 1, 3);
 		
 		solver.addVariable(a);
 		solver.addVariable(b);
 		solver.addVariable(c);
-		
-		solver.addConstraint(new IntEqCst(c, 3)); // A corriger dans l'ordre d'application des filtres
-		solver.addConstraint(new IntEq(a, b));
-		solver.addConstraint(new IntEq(b, c));
+		solver.addConstraint(new IntEqCst(a, 3));
+		solver.addConstraint(new AllDistincts(new ArrayList<>(Arrays.asList(a, b, c))));
 		
 		System.out.println(solver);
 		

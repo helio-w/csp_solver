@@ -13,6 +13,10 @@ public class IntEqCst extends IntConstraint{
 	
 	@Override
 	public void filter() {
-		this.v.setUniqueVal(cst);
+		for(int i = v.getDomainBorneInf(); i <= v.getDomainBorneSup(); i++) {
+			if(i != cst) {
+				v.setDomainVal(i, false);
+			}
+		}
 	}
 }

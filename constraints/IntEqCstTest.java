@@ -23,5 +23,4 @@ class IntEqCstTest {
 		ctrainteTest.filter();
 		assertEquals(5, testVar.getValue());
 	}
-
 }
