@@ -9,26 +9,28 @@ import constraints.AllDistincts;
 import solver.Solver;
 
 public class Sudoku{
-    public ArrayList<ArrayList<IntCsp>> sudokuGrid;
+    public ArrayList<IntCsp> sudokuGrid;
     public Solver solver;
+    private int size;
 
     /**
      * Constructeur de la grille de Sudoku.<br><br>
      * Les variables CSP sont automatiquement ajoutees.
+     * @param size : taille de la grille de sudoku (9, 16, 25 etc)
      */
-    public Sudoku() {
-        this.sudokuGrid = new ArrayList<ArrayList<IntCsp>>();
+    public Sudoku(int size) {
+    	this.size = size;
+        this.sudokuGrid = new ArrayList<>();
         this.solver = new Solver();
-        for(int i = 0; i < 9; i++)
+        for(int j = 0; j < this.size; j++)
         {
-            this.sudokuGrid.add(new ArrayList<IntCsp>());
-            for(int j = 0; j < 9; j++)
+            for(int i = 0; i < this.size; i++)
             {
                 String name = "var_" + i + "_" + j;
                 try
                 {   
-                    IntCsp currVar = new IntCsp(name, 1, 9);
-                    this.sudokuGrid.get(i).add(currVar);
+                    IntCsp currVar = new IntCsp(name, 1, this.size);
+                    this.sudokuGrid.add(currVar);
                     this.solver.addVariable(currVar);
                 }
                 catch (Exception e)
@@ -39,6 +41,10 @@ public class Sudoku{
         }
     }
 
+    private int getInd(int x, int y) {
+    	return x+(y*this.size);
+    }
+    
     /**
      * Obtiens la variable correspondant à la case (x, y)
      * @param x : coordonnée x de la case
@@ -46,7 +52,7 @@ public class Sudoku{
      * @return : la variable correspondant à la case
      */
     public IntCsp getCell(int x, int y) {
-        return this.sudokuGrid.get(y).get(x);
+        return this.sudokuGrid.get(this.getInd(x, y));
     }
 
     /**
@@ -56,57 +62,64 @@ public class Sudoku{
      * @param val : valeur à affecter à la variable
      */
     public void setCell(int x, int y, int val) {
-        this.sudokuGrid.get(x).get(y).setUniqueVal(val);
+        this.sudokuGrid.get(this.getInd(x, y)).setUniqueVal(val);
     }
 
+    
+    private ArrayList<IntCsp> getLine(int l){
+    	ArrayList<IntCsp> res = new ArrayList<>();
+    	for (int i = 0; i < this.size; i++) {
+    		res.add(this.getCell(l, i));
+    	}
+    	return res;
+    }
+    
+    private ArrayList<IntCsp> getColumn(int c){
+    	ArrayList<IntCsp> res = new ArrayList<>();
+    	for (int i = 0; i < this.size; i++) {
+    		res.add(this.getCell(i, c));
+    	}
+    	return res;
+    }
+    
+    private ArrayList<IntCsp> getZone(int z){
+    	ArrayList<IntCsp> res = new ArrayList<>();
+    	int xInit = (int) ((z%Math.sqrt(this.size))*Math.sqrt(this.size));
+    	int yInit = (int) ((z/Math.sqrt(this.size))*Math.sqrt(this.size));
+    	
+    	System.out.println(xInit + " " +yInit);
+    	
+    	for (int i = xInit; i < xInit + Math.sqrt(this.size); i++) {
+    		for(int j = yInit; j < yInit + Math.sqrt(this.size); j++) {
+    			res.add(this.getCell(i, j));
+    		}
+    	}
+    	
+    	return res;
+    }
+    
     /**
      * Création des contraintes allDistincts avec leus variables
      */
     public void createConstraints() {
-        List<AllDistincts> allDistincts_row = new ArrayList<AllDistincts>();
-        List<AllDistincts> allDistincts_col = new ArrayList<AllDistincts>();
-        List<AllDistincts> allDistincts_block = new ArrayList<AllDistincts>();
 
-        for(int i=0; i<9; i++)
-        {
-            allDistincts_col.add(new AllDistincts());
-            allDistincts_row.add(new AllDistincts());
-            allDistincts_block.add(new AllDistincts());
-        }
-
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                IntCsp var = this.getCell(i, j);
-                // TODO : à peut-être modifier après avoir codé allDistincts
-                // allDistincts_row.get(i).add(var);
-                // allDistincts_col.get(j).add(var);
-                // allDistincts_block.get((i / 3) * 3 + j / 3).add(var);
-            }
-        }
-
-        for(int i=0; i<9; i++)
-        {
-            this.solver.addConstraint(allDistincts_row.get(i));
-            this.solver.addConstraint(allDistincts_col.get(i));
-            this.solver.addConstraint(allDistincts_block.get(i));
-        }
     }
+
+    
 
     /**
      * Affiche le grille de sudoku en mode console
      */
     public void displayGrid() {
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < this.size; i++)
         {
-            if (i % 3 == 0 && i != 0)
+            if (i % Math.sqrt(this.size) == 0 && i != 0)
             {
-                System.out.println("------+-------+-------");
+                System.out.println(this.separator());
             }
-            for (int j = 0; j < 9; j++)
+            for (int j = 0; j < this.size; j++)
             {
-                IntCsp var = this.getCell(i, j);
+                IntCsp var = this.getCell(j, i);
                 if (var.isFixed())
                 {
                     int val = var.getValue();
@@ -116,7 +129,7 @@ public class Sudoku{
                 {
                     System.out.print("  ");
                 }
-                if ((j + 1) % 3 == 0 && j != 8)
+                if ((j + 1) % Math.sqrt(this.size) == 0 && j != 8)
                 {
                     System.out.print("| "); 
                 }
@@ -124,9 +137,24 @@ public class Sudoku{
             System.out.println();
         }
     }
+    
+    private String separator() {
+    	String res = "";
+    	for(int i = 0; i < Math.sqrt(size); i++) {
+    		for(int j = 0; j < Math.sqrt(size)*2; j++) {
+        		res += "-";
+        	}
+    		if (i != 0) {
+    			res += "-";
+    		}
+    		res += "+";
 
+    	}
+    	return res;
+    }
+    
     public static void main(String[] args) {
-        Sudoku sudoku = new Sudoku();
+        Sudoku sudoku = new Sudoku(9);
 
         sudoku.setCell(0, 0, 1);
         sudoku.setCell(1, 1, 2);
@@ -135,10 +163,12 @@ public class Sudoku{
         sudoku.setCell(4, 0, 5);
 
         sudoku.displayGrid();
+        
+        System.out.println(sudoku.getZone(3));
 
         try
         {
-            boolean res = sudoku.solver.solve();
+            boolean res = true;
             if(res)
             {
                 System.out.println("Solved !");
