@@ -79,7 +79,7 @@ public class Sudoku{
             for (int j = 0; j < 9; j++)
             {
                 IntCsp var = this.getCell(i, j);
-                // TODO : à peut-être modifer après avoir codé allDistincts
+                // TODO : à peut-être modifier après avoir codé allDistincts
                 allDistincts_row.get(i).add(var);
                 allDistincts_col.get(j).add(var);
                 allDistincts_block.get((i / 3) * 3 + j / 3).add(var);
