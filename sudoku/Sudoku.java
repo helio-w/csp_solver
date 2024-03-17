@@ -3,7 +3,9 @@ package sudoku;
 import var.IntCsp;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import constraints.AllDistincts;
 import solver.Solver;
 
 public class Sudoku{
@@ -17,9 +19,11 @@ public class Sudoku{
     public Sudoku() {
         this.sudokuGrid = new ArrayList<ArrayList<IntCsp>>();
         this.solver = new Solver();
-        for(int i = 0; i < 9; i++) {
+        for(int i = 0; i < 9; i++)
+        {
             this.sudokuGrid.add(new ArrayList<IntCsp>());
-            for(int j = 0; j < 9; j++) {
+            for(int j = 0; j < 9; j++)
+            {
                 String name = "var_" + i + "_" + j;
                 try
                 {   
@@ -42,7 +46,7 @@ public class Sudoku{
      * @return : la variable correspondant à la case
      */
     public IntCsp getCell(int x, int y) {
-        return this.sudokuGrid.get(x).get(y);
+        return this.sudokuGrid.get(y).get(x);
     }
 
     /**
@@ -56,22 +60,63 @@ public class Sudoku{
     }
 
     /**
+     * Création des contraintes allDistincts avec leus variables
+     */
+    public void createConstraints() {
+        List<AllDistincts> allDistincts_row = new ArrayList<AllDistincts>();
+        List<AllDistincts> allDistincts_col = new ArrayList<AllDistincts>();
+        List<AllDistincts> allDistincts_block = new ArrayList<AllDistincts>();
+
+        for(int i=0; i<9; i++)
+        {
+            allDistincts_col.add(new AllDistincts());
+            allDistincts_row.add(new AllDistincts());
+            allDistincts_block.add(new AllDistincts());
+        }
+
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                IntCsp var = this.getCell(i, j);
+                allDistincts_row.get(i).add(var);
+                allDistincts_col.get(j).add(var);
+                allDistincts_block.get((i / 3) * 3 + j / 3).add(var);
+            }
+        }
+
+        for(int i=0; i<9; i++)
+        {
+            this.solver.addConstraint(allDistincts_row.get(i));
+            this.solver.addConstraint(allDistincts_col.get(i));
+            this.solver.addConstraint(allDistincts_block.get(i));
+        }
+    }
+
+    /**
      * Affiche le grille de sudoku en mode console
      */
     public void displayGrid() {
-        for (int i = 0; i < 9; i++) {
-            if (i % 3 == 0 && i != 0) {
+        for (int i = 0; i < 9; i++)
+        {
+            if (i % 3 == 0 && i != 0)
+            {
                 System.out.println("------+-------+-------");
             }
-            for (int j = 0; j < 9; j++) {
+            for (int j = 0; j < 9; j++)
+            {
                 IntCsp var = this.getCell(i, j);
-                if (var.isFixed()) {
+                if (var.isFixed())
+                {
                     int val = var.getValue();
                     System.out.print(val + " ");
-                } else {
+                }
+                else
+                {
                     System.out.print("  ");
                 }
-                if ((j + 1) % 3 == 0 && j != 8) {
+                if ((j + 1) % 3 == 0 && j != 8)
+                {
                     System.out.print("| "); 
                 }
             }
@@ -85,9 +130,26 @@ public class Sudoku{
         sudoku.setCell(0, 0, 1);
         sudoku.setCell(1, 1, 2);
         sudoku.setCell(2, 2, 3);
-        sudoku.setCell(0, 2, 4);
-        sudoku.setCell(0, 4, 5);
+        sudoku.setCell(2, 2, 4);
+        sudoku.setCell(4, 0, 5);
 
         sudoku.displayGrid();
+
+        try
+        {
+            boolean res = sudoku.solver.solve();
+            if(res)
+            {
+                System.out.println("Solved !");
+            }
+            else
+            {
+                System.out.println("No solution !");
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
