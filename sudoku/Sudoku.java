@@ -102,7 +102,11 @@ public class Sudoku{
      * Création des contraintes allDistincts avec leus variables
      */
     public void createConstraints() {
-
+    	for (int i = 0; i < this.size; i++) {
+    		solver.addConstraint(new AllDistincts(this.getLine(i)));
+    		solver.addConstraint(new AllDistincts(this.getColumn(i)));
+    		solver.addConstraint(new AllDistincts(this.getZone(i)));
+    	}
     }
 
     
