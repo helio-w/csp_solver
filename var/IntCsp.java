@@ -6,7 +6,7 @@ import domains.IntDomain;
 
 
 public class IntCsp extends Variable {
-	public IntDomain domain; // Public for debug
+	private IntDomain domain; // Public for debug
 	
 	// La mécanique de backtracking des domaines est intégrée aux variables
 	

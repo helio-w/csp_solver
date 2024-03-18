@@ -3,7 +3,6 @@ package sudoku;
 import var.IntCsp;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import constraints.AllDistincts;
 import solver.Solver;
@@ -39,6 +38,7 @@ public class Sudoku{
                 }
             }
         }
+        this.createConstraints();
     }
 
     private int getInd(int x, int y) {
@@ -69,7 +69,7 @@ public class Sudoku{
     private ArrayList<IntCsp> getLine(int l){
     	ArrayList<IntCsp> res = new ArrayList<>();
     	for (int i = 0; i < this.size; i++) {
-    		res.add(this.getCell(l, i));
+    		res.add(this.getCell(i, l));
     	}
     	return res;
     }
@@ -77,7 +77,7 @@ public class Sudoku{
     private ArrayList<IntCsp> getColumn(int c){
     	ArrayList<IntCsp> res = new ArrayList<>();
     	for (int i = 0; i < this.size; i++) {
-    		res.add(this.getCell(i, c));
+    		res.add(this.getCell(c, i));
     	}
     	return res;
     }
@@ -85,9 +85,10 @@ public class Sudoku{
     private ArrayList<IntCsp> getZone(int z){
     	ArrayList<IntCsp> res = new ArrayList<>();
     	int xInit = (int) ((z%Math.sqrt(this.size))*Math.sqrt(this.size));
-    	int yInit = (int) ((z/Math.sqrt(this.size))*Math.sqrt(this.size));
+    	int yInit = (int) ((z/Math.sqrt(this.size)));
+    	yInit *= Math.sqrt(this.size);
     	
-    	System.out.println(xInit + " " +yInit);
+    	System.out.println("Zone " + xInit + " " +yInit);
     	
     	for (int i = xInit; i < xInit + Math.sqrt(this.size); i++) {
     		for(int j = yInit; j < yInit + Math.sqrt(this.size); j++) {
@@ -105,7 +106,7 @@ public class Sudoku{
     	for (int i = 0; i < this.size; i++) {
     		solver.addConstraint(new AllDistincts(this.getLine(i)));
     		solver.addConstraint(new AllDistincts(this.getColumn(i)));
-    		solver.addConstraint(new AllDistincts(this.getZone(i)));
+     		solver.addConstraint(new AllDistincts(this.getZone(i)));
     	}
     }
 
@@ -160,26 +161,56 @@ public class Sudoku{
     public static void main(String[] args) {
         Sudoku sudoku = new Sudoku(9);
 
-        sudoku.setCell(0, 0, 1);
-        sudoku.setCell(1, 1, 2);
-        sudoku.setCell(2, 2, 3);
-        sudoku.setCell(2, 2, 4);
-        sudoku.setCell(4, 0, 5);
-
+        sudoku.setCell(0, 0, 2);
+        sudoku.setCell(2, 0, 9);
+        sudoku.setCell(5, 0, 4);
+        sudoku.setCell(6, 0, 3);
+        sudoku.setCell(8, 0, 1);
+        
+        sudoku.setCell(2, 1, 6);
+        sudoku.setCell(7, 1, 4);
+        
+        sudoku.setCell(4, 2, 5);
+        sudoku.setCell(6, 2, 9);
+        
+        sudoku.setCell(3, 3, 8);
+        sudoku.setCell(4, 3, 7);
+        sudoku.setCell(5, 3, 9);
+        
+        sudoku.setCell(3, 4, 3);
+        sudoku.setCell(6, 4, 6);
+        
+        sudoku.setCell(4, 5, 4);
+        sudoku.setCell(5, 5, 2);
+        sudoku.setCell(7, 5, 7);
+        
+        sudoku.setCell(1, 6, 9);
+        
+        sudoku.setCell(1, 7, 4);
+        sudoku.setCell(2, 7, 5);
+        sudoku.setCell(4, 7, 2);
+        sudoku.setCell(5, 7, 8);
+        
+        sudoku.setCell(2, 8, 3);
+        sudoku.setCell(8, 8, 7);
+        
+        
         sudoku.displayGrid();
         
-        System.out.println(sudoku.getZone(3));
-
+        System.out.println(sudoku.sudokuGrid);
         try
         {
-            boolean res = true;
+            boolean res = sudoku.solver.solve();
+        	// boolean res = true;
             if(res)
             {
                 System.out.println("Solved !");
+                sudoku.displayGrid();
             }
             else
             {
                 System.out.println("No solution !");
+                sudoku.displayGrid();
             }
         }
         catch (Exception e)

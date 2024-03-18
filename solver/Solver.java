@@ -8,8 +8,11 @@ import var.IntCsp;
 import constraints.*;
 
 public class Solver {
-	private ArrayList<IntCsp> variables;
+	private Stack<IntCsp> varStack = new Stack<>();
+	private Stack<IntCsp> varValidated = new Stack<>();
 	private ArrayList<Constraint> constraints;
+	private int undo = 0;
+	private int backup = 0;
 	
 	/**
 	 * Initialise un solveur vide de variable et de contraintes
@@ -20,12 +23,14 @@ public class Solver {
 	}
 	
 	// Méthodes get/set temporaires
-	public ArrayList<IntCsp> getVariables() {
-		return variables;
+	public Stack<IntCsp> getVariables() {
+		return varStack;
 	}
 
-	public void setVariables(ArrayList<IntCsp> variables) {
-		this.variables = variables;
+	public void setVariables(ArrayList<IntCsp> arrVar) {
+		for(IntCsp var : arrVar) {
+			this.varStack.push(var);
+		}
 	}
 
 	public ArrayList<Constraint> getConstraints() {
@@ -41,50 +46,53 @@ public class Solver {
 	}
 
 	public void addVariable(IntCsp v) {
-		this.variables.add(v);
+		this.varStack.push(v);
 	}
 	
-	private IntCsp getFirstNotFixed(){
-		for(IntCsp v : variables){
-			if(v.isFixed() == false){
-				return v;
-			}
+	
+	private void undoAllDomain() {
+		for(IntCsp v1 : varStack)
+		{
+			v1.undoDomain();
 		}
-		return null;
+		for(IntCsp v1 : varValidated)
+		{
+			v1.undoDomain();
+		}
+		this.undo++;
 	}
 	
-	private boolean checkAllFixed(){
-		for(IntCsp v : variables){
-			if(v.isFixed() == false){
-				return false;
-			}
+	private void backupAllDomain() {
+		for(IntCsp var : varStack)
+		{
+			var.pushDomain();
 		}
-		return true;
+		for(IntCsp var : varValidated)
+		{
+			var.pushDomain();
+		}
+		this.backup++;
 	}
 	
     public boolean solve() throws Exception {
 		boolean backtrack = false;
-		IntCsp currentVar;
-		Stack<IntCsp> varStack = new Stack<IntCsp>();
-		varStack.push(this.getFirstNotFixed());
+		boolean theEnd = false;
+    	varValidated.push(varStack.pop());
+    	varValidated.peek().pushDomain();
 		
-        while(!checkAllFixed())
+		/* ----- Boucle de résolution ----- */
+        while(!theEnd)
         {   
+        	System.out.println(String.format("%d backup et %d undo", this.backup, this.undo));
+        	System.out.println(varValidated);
         	backtrack = false;
-        	
-        	System.out.println(this);
-        	// "Sauvegarde" des domaines des variables dans la pile de chaque variable
-    		for(IntCsp var : variables)
-			{
-				var.pushDomain();
-			}
-    		
-    		// Forward Checking
-        	currentVar = varStack.peek();
-			currentVar.fixWithFirstDomVal();
-			
-			System.out.println("Selection de la variable : "+currentVar);
-			
+          	// "Sauvegarde" des domaines des variables dans la pile de chaque variable
+    		this.backupAllDomain();    		
+
+    		// Forward checking
+        	varValidated.peek().fixWithFirstDomVal();
+        	System.out.println("Selection de la variable : "+varValidated.peek());
+
 			// Filtrage
             for(Constraint c : constraints)
 			{
@@ -92,61 +100,73 @@ public class Solver {
 			}
             
             // Vérification des domaines des variables et backtracking si un domaine devient vide
-			for(IntCsp v2 : variables)
+			for(IntCsp v2 : varStack)
 			{
 				if(v2.isDomainEmpty())
 				{
-					System.out.println("Backtracking !");
+					System.out.println("La domaine de la variable (" + v2 + ") est vide !");
 					backtrack = true;
-					for(IntCsp v1 : variables)
-					{
-						v1.undoDomain();
-					}
-					currentVar.blacklistCurrentVal();
 					break;
 				}
 			}
 			
-			if (!backtrack) {
-				System.out.println("On ajoute "+this.getFirstNotFixed()+" à la liste");
-				varStack.push(this.getFirstNotFixed());
-				System.out.println("La tête de liste est maintenant : "+varStack.peek());
-			}else {
-				// Si on a épuisé le domaine de la currentVar, on dépile et on revient en arrère
-				if(currentVar.isDomainEmpty()) {
-					varStack.pop();
-					// Si la varstack est vide, aucun domaine n'est possible et on a pas de solution
-					if(varStack.empty()) {
-						return false;
-					}
-					varStack.firstElement().blacklistCurrentVal();
-				}else {
-					
+			for(IntCsp v2 : varValidated)
+			{
+				if(v2.isDomainEmpty())
+				{
+					System.out.println("La domaine de la variable (" + v2 + ") est vide !");
+					backtrack = true;
+					break;
 				}
 			}
 			
-	        try {
-	            Thread.sleep(1000);
-	        } catch (InterruptedException e) {
-	            // Gérer l'interruption si nécessaire
-	        }
+			// Si on ne fait pas de backtracking, alors on peut faire du FC une autre variable
+			// Sinon, on s'est trompé et on doit faire marche arrière et annuler le filtrage
+			if(backtrack) {
+				System.out.println("Backtracking !");
+				// On annule le dernier filtrage
+				this.undoAllDomain();
+				// On invalide la valeur actuelle de currentVar -> elle ne mène à aucune solution
+				varValidated.peek().blacklistCurrentVal();
+
+								
+				// Si le domaine de la variable courante est vide, alors on fait encore marche arrière
+				// Sinon, on ne fait rien et on laisse l'algo filter avec une valeur
+				while(!varValidated.isEmpty() && varValidated.peek().isDomainEmpty()) {
+					System.out.println("Retour en arrière ! La variable n'a pas de solution : " + varValidated.peek());
+					this.varStack.push(varValidated.pop());
+					if(varValidated.isEmpty()) {
+						System.out.println("Tous les domaines sont vides !");
+						return false;
+					}
+					this.undoAllDomain();
+					varValidated.peek().blacklistCurrentVal();
+					
+				}
+			}else if(varStack.isEmpty()) {
+				theEnd = true;
+			}
+			else {
+				varValidated.push(varStack.pop());
+			}
+			
+			
+
         }
         /* ----- Fin de la boucle ---- */
-        
-        
-        // Retour
-        if(this.checkAllFixed()) {
-        	return true;
-        } else {
-        	return false;
-        }
+    
+        return true;
     }
     
     // Affichage de l'état du système
     @Override
     public String toString() {
     	String res = "Etat du solveur : \n";
-    	for(IntCsp v : variables) {
+    	for(IntCsp v : varStack) {
+    		res += v.toString() + "\n";
+    	}
+    	res += "\nVariables validées = \n";
+    	for(IntCsp v : varValidated) {
     		res += v.toString() + "\n";
     	}
     	return res;
@@ -158,17 +178,32 @@ public class Solver {
 		
 		// On initialise un solveur vide
 		Solver solver = new Solver();
+	
 		
-		IntCsp a = new IntCsp("A", 1, 3);
-		IntCsp b = new IntCsp("B", 1, 3);
-		IntCsp c = new IntCsp("C", 1, 3);
+		// Création des variables avec les domaines appropriés
+		IntCsp A = new IntCsp("A", 1, 4);
+		IntCsp B = new IntCsp("B", 1, 4);
+		IntCsp C = new IntCsp("C", 1, 4);
+		IntCsp D = new IntCsp("D", 1, 4);
 		
-		solver.addVariable(a);
-		solver.addVariable(b);
-		solver.addVariable(c);
-		solver.addConstraint(new IntEqCst(a, 3));
-		solver.addConstraint(new AllDistincts(new ArrayList<>(Arrays.asList(a, b, c))));
-		
+		// Ajout des variables au solveur
+		solver.addVariable(A);
+		solver.addVariable(B);
+		solver.addVariable(C);
+		solver.addVariable(D);
+
+		// Ajout des contraintes pour fixer les valeurs des variables
+		solver.addConstraint(new IntEqCst(A, 1));
+		solver.addConstraint(new IntEqCst(B, 2));
+		solver.addConstraint(new IntEqCst(C, 3));
+		// solver.addConstraint(new IntEqCst(D, 4));
+
+		// Ajout des contraintes d'égalité entre les variables
+		//solver.addConstraint(new IntEq(A, B));
+		// solver.addConstraint(new IntEq(B, C));
+		solver.addConstraint(new IntEq(C, D));
+
+				
 		System.out.println(solver);
 		
 		if(solver.solve()) {
