@@ -158,64 +158,24 @@ public class Sudoku{
     	return res;
     }
     
-    public static void main(String[] args) {
-        Sudoku sudoku = new Sudoku(9);
-
-        sudoku.setCell(0, 0, 2);
-        sudoku.setCell(2, 0, 9);
-        sudoku.setCell(5, 0, 4);
-        sudoku.setCell(6, 0, 3);
-        sudoku.setCell(8, 0, 1);
-        
-        sudoku.setCell(2, 1, 6);
-        sudoku.setCell(7, 1, 4);
-        
-        sudoku.setCell(4, 2, 5);
-        sudoku.setCell(6, 2, 9);
-        
-        sudoku.setCell(3, 3, 8);
-        sudoku.setCell(4, 3, 7);
-        sudoku.setCell(5, 3, 9);
-        
-        sudoku.setCell(3, 4, 3);
-        sudoku.setCell(6, 4, 6);
-        
-        sudoku.setCell(4, 5, 4);
-        sudoku.setCell(5, 5, 2);
-        sudoku.setCell(7, 5, 7);
-        
-        sudoku.setCell(1, 6, 9);
-        
-        sudoku.setCell(1, 7, 4);
-        sudoku.setCell(2, 7, 5);
-        sudoku.setCell(4, 7, 2);
-        sudoku.setCell(5, 7, 8);
-        
-        sudoku.setCell(2, 8, 3);
-        sudoku.setCell(8, 8, 7);
-        
-        
-        sudoku.displayGrid();
-        
-        System.out.println(sudoku.sudokuGrid);
+    public boolean solve() {
+        boolean res = false;      
         try
         {
-            boolean res = sudoku.solver.solve();
-        	// boolean res = true;
+            res = solver.solve();
             if(res)
             {
                 System.out.println("Solved !");
-                sudoku.displayGrid();
             }
             else
             {
                 System.out.println("No solution !");
-                sudoku.displayGrid();
             }
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+        return res;
     }
 }
