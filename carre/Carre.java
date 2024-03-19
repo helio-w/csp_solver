@@ -104,13 +104,47 @@ public class Carre {
         }
     }
 
+    private boolean isValid() {
+        boolean res = true;
+        ArrayList<ArrayList<IntCsp>> verif = new ArrayList<>();
+        for(int i = 0; i < 3; i++)
+        {
+            ArrayList<IntCsp> line = this.getLine(i);
+            ArrayList<IntCsp> column = this.getColumn(i);
+            if(i==0 || i==1)
+            {
+                ArrayList<IntCsp> diagonal = this.getDiagonal(i);
+                verif.add(diagonal);
+            }
+            verif.add(line);
+            verif.add(column);
+        }
+
+        for(ArrayList<IntCsp> zone : verif)
+        {
+            int sum = 0;
+            for(IntCsp var : zone)
+            {
+                sum += var.getValue();
+            }
+            if(sum != cte)
+            {
+                res = false;
+                break;
+            }
+
+        }
+        return res;
+    }
+
 
     public static void main(String[] args) {
-        Carre carre = new Carre(15);
+        Carre carre = new Carre(18);
         carre.displayCarre();
         try{
             TimeUnit.SECONDS.sleep(1);
             carre.solver.solve();
+            System.out.println(carre.isValid());
         }
         catch(Exception e) {
             e.printStackTrace();
