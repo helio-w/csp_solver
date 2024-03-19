@@ -109,7 +109,6 @@ public class Carre {
         //Carre carre = new Carre(15);
         boolean res = false;
         try{
-            TimeUnit.SECONDS.sleep(1);
             res = solver.solve();
         }
         catch(Exception e) {
