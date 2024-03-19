@@ -107,6 +107,7 @@ public class Carre {
 
     public boolean solve() {
         //Carre carre = new Carre(15);
+        long start = System.currentTimeMillis();
         boolean res = false;
         try{
             res = solver.solve();
@@ -114,6 +115,8 @@ public class Carre {
         catch(Exception e) {
             e.printStackTrace();
         }
+        long end = System.currentTimeMillis();
+        System.out.println("Time : " + (end - start) + " ms");
         return res;
     }
 }
