@@ -139,16 +139,18 @@ public class Carre {
 
 
     public static void main(String[] args) {
-        Carre carre = new Carre(18);
+        long start = System.currentTimeMillis();
+        Carre carre = new Carre(15);
         carre.displayCarre();
         try{
-            TimeUnit.SECONDS.sleep(1);
             carre.solver.solve();
-            System.out.println(carre.isValid());
         }
         catch(Exception e) {
             e.printStackTrace();
         }
         carre.displayCarre();
+        System.out.println(carre.isValid());
+        long end = System.currentTimeMillis();
+        System.out.println((end - start) + " ms");
     }
 }
