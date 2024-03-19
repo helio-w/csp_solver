@@ -43,30 +43,33 @@ public class SudokuWindow extends GridPane{
     }
 
     public void setCellValue(int x, int y, int value){
-        //cellsArray.get(new int[] {x,y}).setValue(value);
-        cellsArray.get(Arrays.asList(x, y)).setValue(value);
+        SudokuCell actuCell = cellsArray.get(Arrays.asList(x, y));
+        actuCell.setValue(value);
+        actuCell.changeStyleCell("#a09c9b");
     }
     
     public void resetAll(){
         for (HashMap.Entry cell : cellsArray.entrySet()) {
-            ((SudokuCell)cell.getValue()).setValue(0);
+            SudokuCell actuCell = ((SudokuCell)cell.getValue());
+            actuCell.setValue(0);
+            actuCell.changeStyleCell("#a09c9b");
         }
     }
 
     public void startSolve(){
         Sudoku sudokuSolve = new Sudoku(gridSize);
         for (HashMap.Entry cell : cellsArray.entrySet()) {
-            int actualCell = ((SudokuCell)cell.getValue()).getValue();
-            if (actualCell != 0)
+            SudokuCell actualCell = ((SudokuCell)cell.getValue());
+            actualCell.oneButtonView();
+            if (actualCell.getValue() != 0)
             {
                 List<Integer> coordonnee = (List<Integer>) cell.getKey();
-                sudokuSolve.setCell(coordonnee.get(0), coordonnee.get(1), actualCell);
+                sudokuSolve.setCell(coordonnee.get(0), coordonnee.get(1), actualCell.getValue());
             }
         }
-        sudokuSolve.displayGrid();
+
         if(sudokuSolve.solve())
         {
-            sudokuSolve.displayGrid();
             for (HashMap.Entry cell : cellsArray.entrySet()) {
                 List<Integer> coordonnee = (List<Integer>) cell.getKey();
                 int cooX = coordonnee.get(0);
@@ -74,6 +77,30 @@ public class SudokuWindow extends GridPane{
                 setCellValue(cooX, cooY, sudokuSolve.getCell(cooX, cooY).getValue());
             }
         }
-        //reste a remplir les case de l'ihm avec celle du solve si il est juste mais je prefere attendre Alexandre
+        else
+        {
+            for (HashMap.Entry cell : cellsArray.entrySet()) {
+                if (((SudokuCell)cell.getValue()).getValue() != 0)
+                {
+                    List<Integer> coordonnee = (List<Integer>) cell.getKey();
+                    checkCell(coordonnee.get(0), coordonnee.get(1));
+                }
+                
+            }
+        }
+    }
+
+    private void checkCell(int cooX, int cooY){
+        int actuCellValue = cellsArray.get(Arrays.asList(cooX,cooY)).getValue();
+        for (int i = 0; i < gridSize; i++) {
+            if(cellsArray.get(Arrays.asList(cooX,i)).getValue() == actuCellValue && i != cooY)
+            {
+                cellsArray.get(Arrays.asList(cooX,i)).changeStyleCell("#ff2d00");
+            }
+            if(cellsArray.get(Arrays.asList(i,cooY)).getValue() == actuCellValue && i != cooX)
+            {
+                cellsArray.get(Arrays.asList(i,cooY)).changeStyleCell("#ff2d00");
+            }
+        }
     }
 }

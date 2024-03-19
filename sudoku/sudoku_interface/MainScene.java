@@ -10,13 +10,4 @@ public class MainScene extends HBox {
         getChildren().addAll(sudokuWindow,userWindow);
         //testSetteur(sudokuWindow);
     }
-
-    //fonction de stress test pour les setCellValue, plus d'utilité a part pour des démonstration
-    private void testSetteur(SudokuWindow sudokuWindow){
-        for (int x = 0; x < 9; x++) {
-            for (int y = 0; y < 9; y++) {
-                sudokuWindow.setCellValue(x, y, y+1);
-            }
-        }
-    }
 }

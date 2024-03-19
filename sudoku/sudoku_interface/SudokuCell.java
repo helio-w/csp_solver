@@ -6,8 +6,9 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 
 public class SudokuCell extends GridPane{
-    int value = 0;
-    Button valueButton = new Button();
+    private int value = 0;
+    private Button valueButton = new Button();
+    private int fontSize = 30;
     public SudokuCell(int size){
         super();
         for (int index = 0; index < size; index++)
@@ -22,7 +23,7 @@ public class SudokuCell extends GridPane{
         add(valueButton,0,0,3,3);
         valueButton.setMaxWidth(Double.MAX_VALUE);
         valueButton.setMaxHeight(Double.MAX_VALUE);
-        valueButton.setStyle("-fx-font-size:30");
+        changeStyleCell("#a09c9b");
 
         valueButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -67,5 +68,9 @@ public class SudokuCell extends GridPane{
         {
             setValue(0);
         }
+    }
+
+    public void changeStyleCell(String newColor){
+        valueButton.setStyle("-fx-border-color: "+newColor+"; -fx-font-size:"+fontSize);
     }
 }
