@@ -31,7 +31,6 @@ public class SudokuCell extends GridPane{
                 valueButtonAction();
             }
         });
-        //multipleButtonView();
     }
 
     public void setValue(int newValue){
