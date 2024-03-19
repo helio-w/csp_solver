@@ -184,7 +184,7 @@ public class Solver {
 		IntCsp A = new IntCsp("A", 1, 4);
 		IntCsp B = new IntCsp("B", 1, 4);
 		IntCsp C = new IntCsp("C", 1, 4);
-		IntCsp D = new IntCsp("D", 1, 4);
+		IntCsp D = new IntCsp("D", -6, 4);
 		
 		// Ajout des variables au solveur
 		solver.addVariable(A);
@@ -193,16 +193,7 @@ public class Solver {
 		solver.addVariable(D);
 
 		// Ajout des contraintes pour fixer les valeurs des variables
-		solver.addConstraint(new IntEqCst(A, 1));
-		solver.addConstraint(new IntEqCst(B, 2));
-		solver.addConstraint(new IntEqCst(C, 3));
-		// solver.addConstraint(new IntEqCst(D, 4));
-
-		// Ajout des contraintes d'égalité entre les variables
-		//solver.addConstraint(new IntEq(A, B));
-		// solver.addConstraint(new IntEq(B, C));
-		solver.addConstraint(new IntEq(C, D));
-
+		solver.addConstraint(new IntAddEqCst(new ArrayList<>(Arrays.asList(A, B, C, D)), 5));
 				
 		System.out.println(solver);
 		

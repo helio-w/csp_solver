@@ -150,6 +150,10 @@ public class IntCsp extends Variable {
 		this.setDomainVal(this.getValue(), false);
 	}
 	
+	public void invalidateDomain() {
+		this.domain.invalidateDomain();
+	}
+	
 	@Override
 	public String toString() {
 		if(this.isFixed()) {

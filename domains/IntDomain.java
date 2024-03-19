@@ -91,6 +91,10 @@ public class IntDomain extends Domain{
 		return this.domain.nextSetBit(0)+this.borneInf;
 	}
 	
+	public void invalidateDomain() {
+		this.domain.clear();
+	}
+	
 	public void setUniqueVal(int val) {
 		this.domain.clear();
 		this.domain.set(this.getValIndex(val));
