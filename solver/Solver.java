@@ -83,15 +83,15 @@ public class Solver {
 		/* ----- Boucle de résolution ----- */
         while(!theEnd)
         {   
-        	System.out.println(String.format("%d backup et %d undo", this.backup, this.undo));
-        	System.out.println(varValidated);
+        	//System.out.println(String.format("%d backup et %d undo", this.backup, this.undo));
+        	//System.out.println(varValidated);
         	backtrack = false;
           	// "Sauvegarde" des domaines des variables dans la pile de chaque variable
     		this.backupAllDomain();    		
 
     		// Forward checking
         	varValidated.peek().fixWithFirstDomVal();
-        	System.out.println("Selection de la variable : "+varValidated.peek());
+        	//System.out.println("Selection de la variable : "+varValidated.peek());
 
 			// Filtrage
             for(Constraint c : constraints)
@@ -104,7 +104,7 @@ public class Solver {
 			{
 				if(v2.isDomainEmpty())
 				{
-					System.out.println("La domaine de la variable (" + v2 + ") est vide !");
+					//System.out.println("La domaine de la variable (" + v2 + ") est vide !");
 					backtrack = true;
 					break;
 				}
@@ -114,7 +114,7 @@ public class Solver {
 			{
 				if(v2.isDomainEmpty())
 				{
-					System.out.println("La domaine de la variable (" + v2 + ") est vide !");
+					//System.out.println("La domaine de la variable (" + v2 + ") est vide !");
 					backtrack = true;
 					break;
 				}
@@ -123,7 +123,7 @@ public class Solver {
 			// Si on ne fait pas de backtracking, alors on peut faire du FC une autre variable
 			// Sinon, on s'est trompé et on doit faire marche arrière et annuler le filtrage
 			if(backtrack) {
-				System.out.println("Backtracking !");
+				//System.out.println("Backtracking !");
 				// On annule le dernier filtrage
 				this.undoAllDomain();
 				// On invalide la valeur actuelle de currentVar -> elle ne mène à aucune solution
@@ -133,10 +133,10 @@ public class Solver {
 				// Si le domaine de la variable courante est vide, alors on fait encore marche arrière
 				// Sinon, on ne fait rien et on laisse l'algo filter avec une valeur
 				while(!varValidated.isEmpty() && varValidated.peek().isDomainEmpty()) {
-					System.out.println("Retour en arrière ! La variable n'a pas de solution : " + varValidated.peek());
+					//System.out.println("Retour en arrière ! La variable n'a pas de solution : " + varValidated.peek());
 					this.varStack.push(varValidated.pop());
 					if(varValidated.isEmpty()) {
-						System.out.println("Tous les domaines sont vides !");
+						//System.out.println("Tous les domaines sont vides !");
 						return false;
 					}
 					this.undoAllDomain();

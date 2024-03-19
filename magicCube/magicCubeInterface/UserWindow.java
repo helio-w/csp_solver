@@ -17,16 +17,24 @@ public class UserWindow extends VBox{
     Button start;
     int magicCubeValue = 0;
     TextField valueField;
-    public UserWindow(double windowWidth){
+    boolean hasBeenClicked = false;
+    public UserWindow(double windowWidth, MagicCubeWindow magicCubeWindow){
         super();
         this.setAlignment(Pos.CENTER);
 
         start = new Button("Start");
         valueField = new TextField("Entrée une valeur");
 
-        /*start.setOnAction(event -> {
-            sudoku.startSolve();
-        });*/
+        start.setOnAction(e -> {
+            magicCubeWindow.startSolve(Integer.parseInt(valueField.getText()));
+        });
+
+        valueField.setOnMouseClicked(e -> {
+            if (!hasBeenClicked) {
+                hasBeenClicked = true;
+                valueField.setText("");
+            }
+        });
 
         start.setMaxHeight(windowWidth*0.7);
         valueField.setMaxHeight(windowWidth*0.7);
@@ -44,5 +52,4 @@ public class UserWindow extends VBox{
         getChildren().addAll(start,valueField);
         setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
     }
-    
 }

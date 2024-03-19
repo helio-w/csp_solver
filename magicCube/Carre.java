@@ -1,4 +1,4 @@
-package carre;
+package magicCube;
 
 import var.IntCsp;
 
@@ -105,16 +105,16 @@ public class Carre {
     }
 
 
-    public static void main(String[] args) {
-        Carre carre = new Carre(15);
-        carre.displayCarre();
+    public boolean solve() {
+        //Carre carre = new Carre(15);
+        boolean res = false;
         try{
             TimeUnit.SECONDS.sleep(1);
-            carre.solver.solve();
+            res = solver.solve();
         }
         catch(Exception e) {
             e.printStackTrace();
         }
-        carre.displayCarre();
+        return res;
     }
 }

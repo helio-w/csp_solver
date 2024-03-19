@@ -12,7 +12,7 @@ public class MainWindow extends Application {
         
         Scene containMainScene = new Scene(mainScene);
 
-        primaryStage.setTitle("Resolveur carré magique");
+        primaryStage.setTitle("Solveur carré magique");
         primaryStage.setScene(containMainScene);
         primaryStage.show();
     }
