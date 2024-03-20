@@ -12,7 +12,7 @@ public class MainWindow extends Application {
         
         Scene containMainScene = new Scene(mainScene);
 
-        primaryStage.setTitle("Resolveur sudoku");
+        primaryStage.setTitle("Solveur sudoku");
         primaryStage.setScene(containMainScene);
         primaryStage.show();
     }

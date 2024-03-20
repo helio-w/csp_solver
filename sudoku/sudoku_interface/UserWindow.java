@@ -51,5 +51,9 @@ public class UserWindow extends VBox{
         getChildren().addAll(start,clear);
         setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
     }
+
+    public void load(){
+        
+    }
     
 }
