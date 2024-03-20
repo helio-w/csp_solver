@@ -159,6 +159,7 @@ public class Sudoku{
     }
     
     public boolean solve() {
+        long start = System.currentTimeMillis();
         boolean res = false;      
         try
         {
@@ -176,6 +177,8 @@ public class Sudoku{
         {
             e.printStackTrace();
         }
+        long end = System.currentTimeMillis();
+        System.out.println("Time : " + (end - start) + " ms");
         return res;
     }
 }
