@@ -22,6 +22,8 @@ public class MenuPresentation extends Application{
         mainScene.setPrefHeight(150);
         mainScene.setPrefWidth(200);
 
+        mainScene.setSpacing(20);
+
         Button sudokuButton = new Button("Sudoku");
         Button magicCubeButton = new Button("carrée magique");
 
