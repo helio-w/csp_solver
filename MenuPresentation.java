@@ -37,7 +37,7 @@ public class MenuPresentation extends Application{
         });
 
         magicCubeButton.setOnAction(event -> {
-            setStage(primaryStage, "Solveur carrée magique", new magicCube.magicCubeInterface.MainScene());
+            setStage(primaryStage, "Solveur carré magique", new magicCube.magicCubeInterface.MainScene());
         });
 
         primaryStage.addEventHandler(KeyEvent.KEY_RELEASED, (KeyEvent event) -> {
