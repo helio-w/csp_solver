@@ -22,8 +22,8 @@ public class UserWindow extends VBox{
         super();
         this.setAlignment(Pos.CENTER);
 
-        start = new Button("Start");
-        valueField = new TextField("Entrée une valeur");
+        start = new Button("Calculer");
+        valueField = new TextField("Entrer une valeur");
 
         start.setOnAction(e -> {
             magicCubeWindow.startSolve(Integer.parseInt(valueField.getText()));

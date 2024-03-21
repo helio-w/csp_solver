@@ -85,7 +85,6 @@ public class SudokuWindow extends GridPane{
                     List<Integer> coordonnee = (List<Integer>) cell.getKey();
                     checkCell(coordonnee.get(0), coordonnee.get(1));
                 }
-                
             }
         }
     }
