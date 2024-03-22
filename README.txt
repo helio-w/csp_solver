@@ -15,3 +15,8 @@ Utilisation de l'application Magic Cube :
     L'application permet de résoudre un carré magique de 3x3 après avoir fourni le le résultat de la somme voulu.
     Le champs d'entré permet de fournir la somme voulue.
     Le bouton "Calculer" lance la résolution du carré magique.
+
+Outils utilisés :
+    JavaFX
+    JUnit
+    PlantUML
