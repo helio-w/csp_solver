@@ -25,7 +25,7 @@ public class MenuPresentation extends Application{
         mainScene.setSpacing(20);
 
         Button sudokuButton = new Button("Sudoku");
-        Button magicCubeButton = new Button("carrée magique");
+        Button magicCubeButton = new Button("Carré magique");
 
         sudokuButton.setPadding(new Insets(10));
         magicCubeButton.setPadding(new Insets(10));
