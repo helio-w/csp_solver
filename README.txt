@@ -4,7 +4,7 @@ Université de Poitiers
 Alexandre Guillot  -  Rémy Martin  -  Maël Dumont  -  Ambroise Guillemeteau
 2024
 
-Utilisation de l'application Sudoku Solver :
+Utilisation de l'application Solveur Sudoku :
     L'application permet de rentrer une grille de Sudoku personnalisable de 9x9 à la main.
     Cliquer sur une case vide de la grille permet de sélectionner la valeur souhaitée.
     Cliquer sur une case pleine de la grille permet de supprimer sa valeur.

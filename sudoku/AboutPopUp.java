@@ -1,7 +1,9 @@
 package sudoku;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -11,16 +13,20 @@ public class AboutPopUp extends Alert {
 
         Text text = new Text(
         "Solveur sudoku réalisé dans le cadre de l'UE gestion de projet\n"+
-        "L3 Informatique de L'université de Poitiers\n\n"+
-        "Alexandre Guillot : Solveur CSP et Backtracking\n"+
-        "Maël Dumont : Algorithme de résolution et Backtracking\n"+
-        "Rémy Martin : Interface graphique et liaison au solveur\n"+
-        "Ambroise Guillemeteau : Interface graphique\n\n"+
-        "22/03/2024\n");
+        "Université de Poitiers\n"+
+        "L3 Informatique\n\n"+
+        "Alexandre Guillot\n"+
+        "Maël Dumont\n"+
+        "Rémy Martin\n"+
+        "Ambroise Guillemeteau\n\n"+
+        "2024");
         text.setTextAlignment(TextAlignment.CENTER);
-        getDialogPane().setContent(text);
+        VBox vBox = new VBox(text);
+        vBox.setPadding(new Insets(10));
 
-        setTitle("A propos");
+        getDialogPane().setContent(vBox);
+
+        setTitle("About");
         getButtonTypes().add(ButtonType.CLOSE);
         
         this.show();

@@ -23,7 +23,7 @@ public class UserWindow extends VBox{
         this.sudoku = sudoku;
         start = new Button("Start");
         clear = new Button("Clear");
-        aPropos = new Button("A propos");
+        aPropos = new Button("About");
 
         start.setOnAction(event -> {
             sudoku.startSolve();
